@@ -1,7 +1,7 @@
-/// A crate to help you set up explosive mines that go BOOM!
-///
-/// All functions and methods in this crate will panic in debug build, and causes undefined
-/// behavior in release build.
+//! A crate to help you set up explosive mines that go BOOM!
+//!
+//! All functions and methods in this crate will panic in debug build, and causes undefined
+//! behavior in release build.
 
 use std::mem;
 
@@ -16,6 +16,7 @@ pub unsafe fn boom() -> ! {
     match *v {}
 }
 
+/// `boom` extensions to `Option`.
 pub trait OptionExt<T> {
     /// `boom` assertion of `Some` variant.
     unsafe fn boom_some(self) -> T;
@@ -24,6 +25,7 @@ pub trait OptionExt<T> {
     unsafe fn boom_none(self);
 }
 
+/// `boom` extensions to `Result`.
 pub trait ResultExt<T, E> {
     /// `boom` assertion of `Ok` variant.
     unsafe fn boom_ok(self) -> T;
@@ -32,6 +34,7 @@ pub trait ResultExt<T, E> {
     unsafe fn boom_err(self) -> E;
 }
 
+/// `boom` extensions to `[T]`.
 pub trait SliceExt<T> {
     /// `boom` variant of `get`.
     unsafe fn boom_get(&self, index: usize) -> &T;
