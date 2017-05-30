@@ -10,8 +10,8 @@ enum Void {}
 /// This function will panic on debug builds, and marks itself unreachable on release builds
 /// (through unsafe compiler intrinsics).
 #[inline]
-pub unsafe fn boom() -> ! {
-    debug_assert!(false, "BOOM! This is a bug!");
+pub unsafe fn boom(msg: &str) -> ! {
+    debug_assert!(false, "BOOM! {}", msg);
     let v: &Void = mem::transmute(0usize);
     match *v {}
 }
@@ -23,6 +23,9 @@ pub trait OptionExt<T> {
 
     /// `boom` assertion of `None` variant.
     unsafe fn boom_none(self);
+
+    /// `take` with `boom` assertion.
+    unsafe fn boom_take(&mut self) -> T;
 }
 
 /// `boom` extensions to `Result`.
@@ -47,14 +50,21 @@ impl<T> OptionExt<T> for Option<T> {
     unsafe fn boom_some(self) -> T {
         match self {
             Some(x) => x,
-            None => boom(),
+            None => boom("Expected Some got None"),
         }
     }
 
     unsafe fn boom_none(self) {
         match self {
-            Some(_) => boom(),
+            Some(_) => boom("Expected None, got Some"),
             None => (),
+        }
+    }
+
+    unsafe fn boom_take(&mut self) -> T {
+        match self.take() {
+            Some(x) => x,
+            None => boom("Expected None, got Some"),
         }
     }
 }
@@ -63,13 +73,13 @@ impl<T, E> ResultExt<T, E> for Result<T, E> {
     unsafe fn boom_ok(self) -> T {
         match self {
             Ok(x) => x,
-            Err(_) => boom(),
+            Err(_) => boom("Expected Ok, got Err"),
         }
     }
 
     unsafe fn boom_err(self) -> E {
         match self {
-            Ok(_) => boom(),
+            Ok(_) => boom("Expected Err, got Ok"),
             Err(e) => e,
         }
     }
