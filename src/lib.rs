@@ -47,6 +47,7 @@ pub trait SliceExt<T> {
 }
 
 impl<T> OptionExt<T> for Option<T> {
+    #[inline]
     unsafe fn boom_some(self) -> T {
         match self {
             Some(x) => x,
@@ -54,6 +55,7 @@ impl<T> OptionExt<T> for Option<T> {
         }
     }
 
+    #[inline]
     unsafe fn boom_none(self) {
         match self {
             Some(_) => boom("Expected None, got Some"),
@@ -61,6 +63,7 @@ impl<T> OptionExt<T> for Option<T> {
         }
     }
 
+    #[inline]
     unsafe fn boom_take(&mut self) -> T {
         match self.take() {
             Some(x) => x,
@@ -70,6 +73,7 @@ impl<T> OptionExt<T> for Option<T> {
 }
 
 impl<T, E> ResultExt<T, E> for Result<T, E> {
+    #[inline]
     unsafe fn boom_ok(self) -> T {
         match self {
             Ok(x) => x,
@@ -77,6 +81,7 @@ impl<T, E> ResultExt<T, E> for Result<T, E> {
         }
     }
 
+    #[inline]
     unsafe fn boom_err(self) -> E {
         match self {
             Ok(_) => boom("Expected Err, got Ok"),
@@ -86,11 +91,13 @@ impl<T, E> ResultExt<T, E> for Result<T, E> {
 }
 
 impl<T> SliceExt<T> for [T] {
+    #[inline]
     unsafe fn boom_get(&self, index: usize) -> &T {
         debug_assert!(index < self.len(), "BOOM! Index out of bounds!");
         self.get_unchecked(index)
     }
 
+    #[inline]
     unsafe fn boom_get_mut(&mut self, index: usize) -> &mut T {
         debug_assert!(index < self.len(), "BOOM! Index out of bounds!");
         self.get_unchecked_mut(index)
